@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "darwin", "darwin-arm64", "linux-musl", "debian-openssl-1.1.x", "darwin"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id_cliente        Int        @id @default(autoincrement())
+  nome              String
+  email             String     @unique
+  telefone          String
+  cpf               String     @unique
+  endereco          Endereco?
+  data_nasc         DateTime
+  senha             String
+  conta_relacao     Conta?
+  tipo              Tipo_Cargo
+  criado_em         DateTime   @default(now())
+  atualizado_em     DateTime   @updatedAt
+}
+enum Tipo_Cargo {
+  engenheiro_de_software
+  desenvolvedor_back_end
+  desenvolvedor_mobile
+  desenvolvedor_front_end
+  designer
+  designer_ux_ui
+  analista_de_dados
+  analista_de_sistemas
+  arquiteto_de_software
+  analista_de_qualidade_de_software
+  suporte_tecnico
+  estagiario
+}
+
+model Endereco {
+  id_endereco       Int         @id @default(autoincrement())
+  cliente           Cliente     @relation(fields: [cliente_id], references: [id_cliente])
+  cliente_id        Int         @unique
+  cep               String
+  rua               String
+  bairro            String
+  numero            String
+  complemento       String
+  cidade            String
+  estado            String
+  criado_em         DateTime    @default(now())
+  atualizado_em     DateTime    @updatedAt
+}
+
+enum Status_c {
+  ativa
+  inativa
+  bloqueada
+}
+
+model Conta {
+  id_conta            Int             @id @default(autoincrement())
+  id_cliente          Cliente         @relation(fields: [cliente_id], references: [id_cliente])
+  cliente_id          Int             @unique
+  numero_agencia      String          
+  numero_conta        String          @unique
+  saldo               Float           
+  status_conta        Status_c
+  senha_4d            String
+  id_conta_origem     Transferencia[] @relation("Origem")
+  id_conta_destino    Transferencia[] @relation("Destino")
+}
+
+
+model Transferencia {
+  id_transferencia        Int         @id @default(autoincrement())
+  conta_origem            Conta       @relation("Origem", fields: [id_origem], references: [id_conta])
+  id_origem               Int
+  conta_destino           Conta       @relation("Destino", fields: [id_destino], references: [id_conta])
+  id_destino              Int
+  valor                   Float
+  status_transferencia    Status_t
+  descricao               String
+  data_transferencia      DateTime    @default(now())
+}
+
+enum Status_t {
+  enviada
+  rejeitada
+}

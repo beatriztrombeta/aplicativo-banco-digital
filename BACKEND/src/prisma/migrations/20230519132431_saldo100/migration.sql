@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Conta" ALTER COLUMN "saldo" SET DEFAULT 100;
