@@ -1,5 +1,3 @@
-# Rubcamp - MVC Boiterplate
-
 Para rodar o projeto, siga os passos:
 
 1. No terminal, rode o comando: `make up-build`
